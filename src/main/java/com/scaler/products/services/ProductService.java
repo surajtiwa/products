@@ -3,6 +3,8 @@ package com.scaler.products.services;
 import com.scaler.products.dtos.GetproductDto;
 import com.scaler.products.exceptions.NotFoundException;
 import com.scaler.products.models.Product;
+import com.scaler.products.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,6 +15,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
+    @Autowired
+    ProductRepository productRepository;
 
     public GetproductDto getproductById(Long id) throws NotFoundException {
 //      calling the third party api
@@ -48,5 +53,17 @@ public class ProductService {
         getproductDto.setPrice(product.getPrice());
         getproductDto.setImageUrl(product.getImage());
         return getproductDto;
+    }
+
+    public List<Product> saveAllProduct() {
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://fakestoreapi.com/products/";
+        Product[] productArray = restTemplate.getForObject(url, Product[].class);
+        List<Product> products=Arrays.stream(productArray).
+                toList().stream().collect(Collectors.toList());
+        productRepository.saveAll(products);
+
+        return products;
     }
 }

@@ -34,4 +34,9 @@ public class ProductController {
     public Product createProduct(@RequestBody Product product) {
         return product;
     }
+
+    @PostMapping("/thirdparty")
+    public List<Product> saveDataFromThirdParty() {
+        return productService.saveAllProduct();
+    }
 }
